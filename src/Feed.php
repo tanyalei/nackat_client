@@ -4,22 +4,39 @@ namespace NationalCatalogApi;
 
 final class Feed
 {
-	private $entries = [];
+    /**
+     * @var array
+     */
+    private $entries = [];
 
-	public function newEntry()
+    /**Returns empty entry
+     * @return Entry
+     */
+    public function newEntry()
 	{
 		return new Entry();
 	}
+
+    /**Add formed Entry
+     * @param Entry $entry
+     */
 	public function addEntry($entry)
 	{
 		$this->entries[] = $entry;
 	}
 
+    /**
+     * Returns entries
+     * @return array of Entry obj
+     */
 	public function getList()
 	{
 		return $this->entries;
 	}
 
+    /**Converts entries to json
+     * @return string
+     */
 	public function asJson()
 	{
 		$result = [];

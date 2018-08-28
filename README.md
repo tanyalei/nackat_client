@@ -3,8 +3,12 @@
 ```
 $api = new \NationalCatalogApi\Client('tygcz9merg9cotv', 'eqx2g6w0rgnxmq3h');
 
+$api->setUrl('http://api.crpt.my');
+
 $feed = new \NationalCatalogApi\Feed();
+
 $entry = $feed->newEntry();
+
 $entry->setGoodId(123);
 $entry->setGoodName("Шоколад");
 $entry->setBrandId(456);
@@ -24,7 +28,9 @@ $entry->addImage("3ds", [
         ]);
 
 $feed->addEntry($entry);
+
 print_r($feed->asJson());
+
 $result = $api->postFeed($feed);
 ```
 

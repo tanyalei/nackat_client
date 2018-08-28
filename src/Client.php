@@ -3,18 +3,18 @@
 namespace NationalCatalogApi;
 
 /**
- * Class Api
+ * Class Client
  *
  * @property string HeaderResponseCode
  * @property string HeaderETag
  * @property string HeaderAPIUsageLimit
  * @property string HeaderRetryAfter
  *
- * @package NationalCatalog
+ * @package NationalCatalogApi
  */
 final class Client
 {
-    const API_URL = 'http://api.crpt.my';
+    const API_URL = 'https://апи.национальный-каталог.рф';
     const VERSION = 'v3';
 
     const RESPONSE_FORMAT_JSON = 'json';
@@ -64,8 +64,8 @@ final class Client
     private $_headers;
 
     /**
-     * ListexApi constructor.
-     * @param $apiKey
+     * @param string $apiKey
+     * @param string $supplierKey
      */
     public function __construct($apiKey, $supplierKey = null)
     {
@@ -95,11 +95,12 @@ final class Client
      */
     public function setUrl($url)
     {
-        $this->API_URL = $url;
+        $this->apiUrl = $url;
     }
 
     /**
      * @param string $format
+     * @throws \Throwable
      */
     public function setFormat($format)
     {
@@ -178,14 +179,15 @@ final class Client
     }
 
     /**
-     * Send request 
+     * Send request
      *
-     * @param string $requestEntity
-     * @param array $params
+     * @param string $url
+     * @param mixed $params
      * @param array $headers
      * @return bool|string Return the result on success, FALSE on failure
      */
-    private function sendRequest($url, $params = [], array $headers = []) {
+    private function sendRequest($url, $params = [], array $headers = [])
+    {
         $this->_error = null;
         $this->_headers = null;
         $curl = curl_init();
@@ -233,7 +235,8 @@ final class Client
      * @param string $ETag ETag
      * @return bool|string Return the result on success, FALSE on failure
      */
-    public function getPureResponse($requestEntity, array $params = [], $ETag = null) {
+    public function getPureResponse($requestEntity, array $params = [], $ETag = null)
+    {
         $params['format'] = $this->format;
         $params['apikey'] = $this->apiKey;
         if ($this->supplierKey) {
@@ -243,15 +246,14 @@ final class Client
         if (null !== $ETag) {
             $headers[] = 'If-None-Match: "' . $ETag . '"';
         }
-        return $this->sendRequest($this->getUrl($requestEntity), $params, $headers);
+        $url = $this->getUrl($requestEntity);
+        return $this->sendRequest($url, $params, $headers);
     }
 
     /**
-     * Get response
+     * Parse response
      *
-     * @param string $requestEntity
-     * @param array $params
-     * @param string $ETag ETag
+     * @param mixed $result
      * @return bool|array
      */
     public function parseResponse($result)
@@ -301,7 +303,7 @@ final class Client
         return $response;
     }
 
-/**
+    /**
      * Get response
      *
      * @param string $requestEntity
@@ -314,6 +316,7 @@ final class Client
         $result = $this->getPureResponse($requestEntity, $params, $ETag);
         return $this->parseResponse($result);
     }
+
     /**
      * Return the user agent string
      * @return string
@@ -347,6 +350,7 @@ final class Client
     /**
      * Return list of brands
      *
+     * @param int $partyId
      * @param string $ETag ETag
      * @return bool|array
      */
@@ -372,9 +376,15 @@ final class Client
         return $this->request(self::REQUEST_ENTITY_CATEGORIES, [], $ETag);
     }
 
+    /**
+     * Return party list by role
+     *
+     * @param string $role
+     * @return bool|array
+     */
     public function getParties($role = null)
     {
-        return $this->request(self::REQUEST_ENTITY_PARTIES, ['role' => $role], $ETag);
+        return $this->request(self::REQUEST_ENTITY_PARTIES, ['role' => $role]);
     }
 
     /**
@@ -389,40 +399,6 @@ final class Client
             'q' => $query
         ];
         return $this->request(self::REQUEST_ENTITY_SUGGESTIONS, $params);
-    }
-
-    /**
-     * Get status of created feed
-     *
-     * @param int $feed_id feed id
-     * @return bool|array
-     */
-    public function getFeedStatus($feed_id)
-    {
-        $params = [
-            'feed_id' => $feed_id
-        ];
-        return $this->request(self::REQUEST_ENTITY_FEED_STATUS, $params);
-    }
-
-    /**
-     * Get status of created feed
-     *
-     * @param int $feed_id feed id
-     * @return bool|array
-     */
-    public function postFeed($content)
-    {
-        $params['apikey'] = $this->apiKey;
-        $params['supplier_key'] = $this->supplierKey;
-        $params['format'] = $this->format;
-        $url = $this->getUrl(self::REQUEST_ENTITY_FEED) . '?' . http_build_query($params);
-        ////"Content-Type: application/json";, "Content-Type: application/xml";
-        $headers = ["Content-Type: application/json"];
-        
-        $body = ($content instanceof Feed) ? $content->asJson() : $content;
-        $result = $this->sendRequest($url, $body, $headers);
-        return $this->parseResponse($result);
     }
 
     /**
@@ -521,4 +497,42 @@ final class Client
         ];
         return $this->request(self::REQUEST_ENTITY_ETAGS_LIST, $params);
     }
+
+    /**
+     * Get status of created feed
+     *
+     * @param int $feed_id feed id
+     * @return bool|array
+     */
+    public function getFeedStatus($feed_id)
+    {
+        $params = [
+            'feed_id' => $feed_id
+        ];
+        return $this->request(self::REQUEST_ENTITY_FEED_STATUS, $params);
+    }
+
+    /**
+     * Post feed
+     *
+     * @param mixed $content
+     * @return bool|array
+     */
+    public function postFeed($content)
+    {
+        $params['apikey'] = $this->apiKey;
+        $params['supplier_key'] = $this->supplierKey;
+        $params['format'] = $this->format;
+
+        $url = $this->getUrl(self::REQUEST_ENTITY_FEED) . '?' . http_build_query($params);
+
+        ////"Content-Type: application/json";, "Content-Type: application/xml";
+        $headers = ["Content-Type: application/json"];
+
+        $body = ($content instanceof Feed) ? $content->asJson() : $content;
+
+        $result = $this->sendRequest($url, $body, $headers);
+        return $this->parseResponse($result);
+    }
+
 }
