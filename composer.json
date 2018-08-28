@@ -1,0 +1,14 @@
+{
+    "name": "tanyalei/nackat_client",
+    "require": {
+        "php": ">=7.0.0",
+        "ext-json": "*",
+        "ext-xml": "*",
+        "ext-curl": "*"
+    },
+    "autoload": {
+        "psr-0": {
+            "NationalCatalogApi": "src"
+        }
+    }
+}
