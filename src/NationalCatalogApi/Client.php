@@ -259,7 +259,6 @@ final class Client
     public function parseResponse($result)
     {
         $response = false !== $result ? json_decode($result, true) : false;
-        print_r($response);
         if (false !== $response) {
             switch ($this->getHttpCode()) {
                 case self::CODE_STATUS_OK:
@@ -333,7 +332,7 @@ final class Client
      */
     protected function getUrl($requestEntity)
     {
-        return self::API_URL . '/' . self::VERSION . '/' . $requestEntity;
+        return $this->apiUrl . '/' . self::VERSION . '/' . $requestEntity;
     }
 
     /**

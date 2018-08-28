@@ -15,8 +15,8 @@ $entry->setBrandId(456);
 $entry->addCategory(78);
 $entry->deleteCategory(90);
 
-$entry->addIdentifedBy("gtin", "4602065373085");
-$entry->addIdentifedBy("sku", "4602065373000", 3);
+$entry->addIdentifiedBy("gtin", "4602065373085");
+$entry->addIdentifiedBy("sku", "4602065373000", 3);
 
 $entry->addAttr(2123, "4602065373085");
 $entry->addAttr(1324, "4602065373000", 3);
