@@ -34,7 +34,7 @@ print_r($feed->asJson());
 $result = $api->postFeed($feed);// we can pass $feed or $feed->asJson() 
 ```
 
-json 
+## Json 
 
 ```
 [
@@ -96,7 +96,7 @@ json
 
 ```
 
-result 
+## Result 
 
 ```
 Array
