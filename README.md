@@ -27,3 +27,77 @@ $feed->addEntry($entry);
 print_r($feed->asJson());
 $result = $api->postFeed($feed);
 ```
+
+json 
+
+```
+[
+    {
+        "good_id": 123,
+        "good_name": "Шоколад",
+        "brand_id": 456,
+        "categories": [
+            {
+                "cat_id": 78
+            },
+            {
+                "cat_id": 90,
+                "delete": 1
+            }
+        ],
+        "identified_by": [
+            {
+                "type": "gtin",
+                "value": "4602065373085",
+                "multiplier": 1,
+                "level": "trade-unit"
+            },
+            {
+                "type": "sku",
+                "value": "4602065373000",
+                "multiplier": 1,
+                "level": "trade-unit",
+                "party_id": 3
+            }
+        ],
+        "good_attrs": [
+            {
+                "attr_id": 2123,
+                "attr_value": "4602065373085"
+            },
+            {
+                "attr_id": 1324,
+                "attr_value": "4602065373000",
+                "attr_value_type": 3
+            }
+        ],
+        "good_images": [
+            {
+                "photo_type": "default",
+                "photo_url": "https:\/\/s1.1zoom.ru\/prev2\/534\/Painting_Art_Big_cats_Tigers_Canine_tooth_fangs_533009_300x187.jpg",
+                "location_id": 2
+            },
+            {
+                "photo_type": "3ds",
+                "photo_url": [
+                    "https:\/\/s1.1zoom.ru\/prev2\/534\/Painting_Art_Big_cats_Tigers_Canine_tooth_fangs_533009_300x187.jpg",
+                    "https:\/\/s1.1zoom.ru\/prev2\/534\/Painting_Art_Big_cats_Tigers_Canine_tooth_fangs_533009_300x187.jpg"
+                ]
+            }
+        ]
+    }
+]
+
+```
+
+result 
+
+Array
+(
+    [apiversion] => 3
+    [result] => Array
+        (
+            [feed_id] => 131
+        )
+
+)
