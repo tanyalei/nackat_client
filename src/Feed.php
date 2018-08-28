@@ -10,7 +10,6 @@ final class Feed
 	{
 		return new Entry();
 	}
-
 	public function addEntry($entry)
 	{
 		$this->entries[] = $entry;
@@ -27,6 +26,6 @@ final class Feed
 		foreach ($this->entries as $entry) {
 			$result[] = $entry->toArray();
 		}
-		return json_encode($result, , JSON_UNESCAPED_UNICODE);
+		return json_encode($result, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
 	}
 }

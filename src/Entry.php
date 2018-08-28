@@ -36,7 +36,7 @@ final class Entry
             'level' => $level
         ];
         if ($partyId) {
-            $identifiedBy['partyId'] = $partyId;
+            $identifiedBy['party_id'] = $partyId;
         }
         if (!isset($this->entry['identified_by'])) {
             $this->entry['identified_by'] = [];

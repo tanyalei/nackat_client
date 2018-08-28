@@ -1,5 +1,6 @@
 <?php
-namespace NationalCatalog;
+
+namespace NationalCatalogApi;
 
 /**
  * Class Api
@@ -11,7 +12,7 @@ namespace NationalCatalog;
  *
  * @package NationalCatalog
  */
-final class ApiClient
+final class Client
 {
     const API_URL = 'http://api.crpt.my';
     const VERSION = 'v3';
@@ -71,7 +72,7 @@ final class ApiClient
         $this->apiUrl = self::API_URL . '/' . self::VERSION;
         $this->apiKey = $apiKey;
         $this->supplierKey = $supplierKey;
-        $this->format = RESPONSE_FORMAT_JSON;
+        $this->format = self::RESPONSE_FORMAT_JSON;
         $this->_error = null;
         $this->_headers = null;
     }
@@ -102,7 +103,7 @@ final class ApiClient
      */
     public function setFormat($format)
     {
-        if (in_array($format, [RESPONSE_FORMAT_JSON, RESPONSE_FORMAT_XML])) {
+        if (in_array($format, [self::RESPONSE_FORMAT_JSON, self::RESPONSE_FORMAT_XML])) {
             $this->format = $format;
         } else {
             throw new Exception("Format is not supported");
@@ -184,7 +185,7 @@ final class ApiClient
      * @param array $headers
      * @return bool|string Return the result on success, FALSE on failure
      */
-    private function sendRequest($url,  array $params = [], array $headers = []) {
+    private function sendRequest($url, $params = [], array $headers = []) {
         $this->_error = null;
         $this->_headers = null;
         $curl = curl_init();
@@ -240,7 +241,7 @@ final class ApiClient
         }
         $headers = [];
         if (null !== $ETag) {
-            $headers[] = 'If-None-Match: "' . $ETag . '"'
+            $headers[] = 'If-None-Match: "' . $ETag . '"';
         }
         return $this->sendRequest($this->getUrl($requestEntity), $params, $headers);
     }
@@ -415,10 +416,12 @@ final class ApiClient
         $params['apikey'] = $this->apiKey;
         $params['supplier_key'] = $this->supplierKey;
         $params['format'] = $this->format;
-        $url = $this->getUrl($requestEntity) . '?' . http_build_query($params);
+        $url = $this->getUrl(self::REQUEST_ENTITY_FEED) . '?' . http_build_query($params);
         ////"Content-Type: application/json";, "Content-Type: application/xml";
         $headers = ["Content-Type: application/json"];
-        $result = $this->sendRequest($url, $content, $headers);
+        
+        $body = ($content instanceof Feed) ? $content->asJson() : $content;
+        $result = $this->sendRequest($url, $body, $headers);
         return $this->parseResponse($result);
     }
 
