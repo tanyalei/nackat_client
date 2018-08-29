@@ -267,7 +267,11 @@ final class Client
      */
     public function parseResponse($result)
     {
-        $response = false !== $result ? json_decode($result, true) : false;
+        if ($this->format == self::RESPONSE_FORMAT_JSON) {
+            $response = false !== $result ? json_decode($result, true) : false;
+        } else if ($this->format == self::RESPONSE_FORMAT_XML) {
+            $response = $result;
+        }
         if (false !== $response) {
             switch ($this->getHttpCode()) {
                 case self::CODE_STATUS_OK:
