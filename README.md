@@ -1,13 +1,13 @@
 # Example of usage
 
 ```
-$api = new \NationalCatalogApi\Client('tygcz9merg9cotv', 'eqx2g6w0rgnxmq3h');
+$api = new \NationalCatalogApi\Client('tygcz9merg9cotv', 'eqx2g6w0rgnxmq3h'); //apikey, supplier_key
 
-$api->setUrl('http://api.crpt.my');
+$api->setUrl('http://api.crpt.my');// can skip, then used default https://апи.национальный-каталог.рф
 
 $feed = new \NationalCatalogApi\Feed();
 
-$entry = $feed->newEntry();
+$entry = $feed->newEntry();// returns empty object Entity, not related yet with a feed
 
 $entry->setGoodId(123);
 $entry->setGoodName("Шоколад");
@@ -27,14 +27,14 @@ $entry->addImage("3ds", [
           "https://s1.1zoom.ru/prev2/534/Painting_Art_Big_cats_Tigers_Canine_tooth_fangs_533009_300x187.jpg"
         ]);
 
-$feed->addEntry($entry);
+$feed->addEntry($entry); //relate created entry with feed
 
-print_r($feed->asJson());
+print_r($feed->asJson()); 
 
-$result = $api->postFeed($feed);
+$result = $api->postFeed($feed);// we can pass $feed or $feed->asJson() 
 ```
 
-json 
+## Json 
 
 ```
 [
@@ -96,8 +96,9 @@ json
 
 ```
 
-result 
+## Result 
 
+```
 Array
 (
     [apiversion] => 3
@@ -107,3 +108,4 @@ Array
         )
 
 )
+```
