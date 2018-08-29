@@ -69,9 +69,8 @@ final class Client
      */
     public function __construct($apiKey, $supplierKey = null)
     {
-        $this->apiUrl = self::API_URL . '/' . self::VERSION;
-        $this->apiKey = $apiKey;
-        $this->supplierKey = $supplierKey;
+        $this->apiUrl = self::API_URL;
+        $this->auth($apiKey, $supplierKey);
         $this->format = self::RESPONSE_FORMAT_JSON;
         $this->_error = null;
         $this->_headers = null;
@@ -96,6 +95,16 @@ final class Client
     public function setUrl($url)
     {
         $this->apiUrl = $url;
+    }
+
+    /**
+     * @param string $apiKey
+     * @param string $supplierKey
+     */
+    public function auth($apiKey, $supplierKey = null)
+    {
+        $this->apiKey = $apiKey;
+        $this->supplierKey = $supplierKey;
     }
 
     /**
@@ -403,33 +412,129 @@ final class Client
     /**
      * Return list of attributes
      *
-     * @param int $cat_id category id
-     * @param int $attr_type attribute type (const)
+     * @param int $catId category id
+     * @param int $attrType attribute type (const)
      * @return bool|array
      */
-    public function getAttributes($cat_id = null, $attr_type = null)
+    public function getAttributes($catId = null, $attrType = null)
     {
         $params = [];
-        if (isset($cat_id)) {
-            $params['cat_id'] = $cat_id;
+        if (isset($catId)) {
+            $params['cat_id'] = $catId;
         }
-        if (isset($attr_type)) {
-            $params['attr_type'] = $attr_type;
+        if (isset($attrType)) {
+            $params['attr_type'] = $attrType;
         }
         return $this->request(self::REQUEST_ENTITY_ATTRIBUTES, $params);
     }
 
     /**
+     * Add reply to review
+     *
+     * @param int $reviewParentId parent review id
+     * @param string $reviewText message
+     * @param string $socialType social network type (const)
+     * @param string $socialId social network id
+     * @param string $reviewAuthor author name
+     * @param float $reviewRating rating
+     * @return bool|array
+     */
+    public function addReplyToReview($reviewParentId, $reviewText, $socialType, $socialId, $reviewAuthor, $reviewRating)
+    {
+        $params = [
+            'review_parent_id' => $reviewParentId,
+            'review_text' => $reviewText,
+            'social_type' => $socialType,
+            'social_id' => $socialId,
+            'review_author' => $reviewAuthor,
+            'review_rating' => $reviewRating
+        ];
+        return $this->request(self::REQUEST_ENTITY_ADD_REVIEW, $params);
+    }
+
+    /**
+     * Add review to party
+     *
+     * @param int $partyId party id
+     * @param string $reviewText message
+     * @param string $socialType social network type (const)
+     * @param string $socialId social network id
+     * @param string $reviewAuthor author name
+     * @param float $reviewRating rating
+     * @return bool|array
+     */
+    public function addReviewToParty($partyId, $reviewText, $socialType, $socialId, $reviewAuthor, $reviewRating)
+    {
+        $params = [
+            'party_id' => $partyId,
+            'review_text' => $reviewText,
+            'social_type' => $socialType,
+            'social_id' => $socialId,
+            'review_author' => $reviewAuthor,
+            'review_rating' => $reviewRating
+        ];
+        return $this->request(self::REQUEST_ENTITY_ADD_REVIEW, $params);
+    }
+
+    /**
+     * Add review to brand
+     *
+     * @param int $brand_id brand id
+     * @param string $reviewText message
+     * @param string $socialType social network type (const)
+     * @param string $socialId social network id
+     * @param string $reviewAuthor author name
+     * @param float $reviewRating rating
+     * @return bool|array
+     */
+    public function addReviewToBrand($brandId, $reviewText, $socialType, $socialId, $reviewAuthor, $reviewRating)
+    {
+        $params = [
+            'brand_id' => $brandId,
+            'review_text' => $reviewText,
+            'social_type' => $socialType,
+            'social_id' => $socialId,
+            'review_author' => $reviewAuthor,
+            'review_rating' => $reviewRating
+        ];
+        return $this->request(self::REQUEST_ENTITY_ADD_REVIEW, $params);
+    }
+
+    /**
+     * Add review to good
+     *
+     * @param int $goodId good id
+     * @param string $reviewText message
+     * @param string $socialType social network type (const)
+     * @param string $socialId social network id
+     * @param string $reviewAuthor author name
+     * @param float $reviewRating rating
+     * @return bool|array
+     */
+    public function addReviewToGood($goodId, $reviewText, $socialType, $socialId, $reviewAuthor, $reviewRating)
+    {
+        $params = [
+            'good_id' => $goodId,
+            'review_text' => $reviewText,
+            'social_type' => $socialType,
+            'social_id' => $socialId,
+            'review_author' => $reviewAuthor,
+            'review_rating' => $reviewRating
+        ];
+        return $this->request(self::REQUEST_ENTITY_ADD_REVIEW, $params);
+    }
+
+    /**
      * Return information about product by id
      *
-     * @param int $good_id
+     * @param int $goodId
      * @param string $ETag ETag
      * @return bool|array
      */
-    public function getProductById($good_id, $ETag = null)
+    public function getProductById($goodId, $ETag = null)
     {
         $params = [
-            'good_id' => $good_id
+            'good_id' => $goodId
         ];
         return $this->request(self::REQUEST_ENTITY_PRODUCTS, $params, $ETag);
     }
@@ -453,15 +558,15 @@ final class Client
      * Return information about products by LTIN
      *
      * @param string $ltin
-     * @param int $party_id
+     * @param int $partyId
      * @param string $ETag ETag
      * @return bool|array
      */
-    public function getProductsByLtin($ltin, $party_id, $ETag = null)
+    public function getProductsByLtin($ltin, $partyId, $ETag = null)
     {
         $params = [
             'ltin' => $ltin,
-            'party_id' => $party_id
+            'party_id' => $partyId
         ];
         return $this->request(self::REQUEST_ENTITY_PRODUCTS, $params, $ETag);
     }
@@ -470,15 +575,15 @@ final class Client
      * Return information about products by SKU
      *
      * @param string $sku
-     * @param int $party_id
+     * @param int $partyId
      * @param string $ETag ETag
      * @return bool|array
      */
-    public function getProductsBySku($sku, $party_id, $ETag = null)
+    public function getProductsBySku($sku, $partyId, $ETag = null)
     {
         $params = [
             'sku' => $sku,
-            'party_id' => $party_id
+            'party_id' => $partyId
         ];
         return $this->request(self::REQUEST_ENTITY_PRODUCTS, $params, $ETag);
     }
@@ -486,13 +591,13 @@ final class Client
     /**
      * Return array [ GoodId, ETag, Attributes ] for party
      *
-     * @param int $party_id
+     * @param int $partyId
      * @return bool|array
      */
-    public function getETagsList($party_id)
+    public function getETagsList($partyId)
     {
         $params = [
-            'party_id' => $party_id
+            'party_id' => $partyId
         ];
         return $this->request(self::REQUEST_ENTITY_ETAGS_LIST, $params);
     }
@@ -500,13 +605,13 @@ final class Client
     /**
      * Get status of created feed
      *
-     * @param int $feed_id feed id
+     * @param int $feedId feed id
      * @return bool|array
      */
-    public function getFeedStatus($feed_id)
+    public function getFeedStatus($feedId)
     {
         $params = [
-            'feed_id' => $feed_id
+            'feed_id' => $feedId
         ];
         return $this->request(self::REQUEST_ENTITY_FEED_STATUS, $params);
     }
@@ -524,14 +629,16 @@ final class Client
         $params['format'] = $this->format;
 
         $url = $this->getUrl(self::REQUEST_ENTITY_FEED) . '?' . http_build_query($params);
-
-        ////"Content-Type: application/json";, "Content-Type: application/xml";
-        $headers = ["Content-Type: application/json"];
-
         $body = ($content instanceof Feed) ? $content->asJson() : $content;
+
+        $contentTypeHeader = 'Content-Type: application/';
+
+        $isXml = @substr($body, 0, 1) == '<';
+        $contentTypeHeader .= ($isXml) ? "xml" : "json";
+
+        $headers = [$contentTypeHeader];
 
         $result = $this->sendRequest($url, $body, $headers);
         return $this->parseResponse($result);
     }
-
 }
