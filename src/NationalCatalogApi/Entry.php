@@ -126,14 +126,6 @@ final class Entry
     }
 
     /**
-     * @param int $brandId
-     */
-    public function setBrandId($brandId)
-    {
-        $this->entry['brand_id'] = $brandId;
-    }
-
-    /**
      * @return array
      */
     public function toArray()

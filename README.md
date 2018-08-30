@@ -11,7 +11,7 @@ $entry = $feed->newEntry();// returns empty object Entity, not related yet with 
 
 $entry->setGoodId(123);
 $entry->setGoodName("Шоколад");
-$entry->setBrandId(456);
+
 $entry->addCategory(78);
 $entry->deleteCategory(90);
 
@@ -29,19 +29,18 @@ $entry->addImage("3ds", [
 
 $feed->addEntry($entry); //relate created entry with feed
 
-print_r($feed->asJson()); 
+print_r($feed->asJson());
 
-$result = $api->postFeed($feed);// we can pass $feed or $feed->asJson() 
+$result = $api->postFeed($feed);// we can pass $feed or $feed->asJson()
 ```
 
-## Json 
+## Json
 
 ```
 [
     {
         "good_id": 123,
         "good_name": "Шоколад",
-        "brand_id": 456,
         "categories": [
             {
                 "cat_id": 78
@@ -96,7 +95,7 @@ $result = $api->postFeed($feed);// we can pass $feed or $feed->asJson()
 
 ```
 
-## Result 
+## Result
 
 ```
 Array
