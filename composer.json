@@ -2,7 +2,6 @@
     "name": "tanyalei/nackat_client",
     "license": "Apache-2.0",
     "require": {
-        "php": ">=7.0.0",
         "ext-json": "*",
         "ext-curl": "*"
     },
@@ -10,5 +9,11 @@
         "psr-0": {
             "NationalCatalogApi": "src"
         }
-    }
+    },
+    "repositories": [
+      {
+        "type": "github",
+        "url":  "https://github.com/tanyalei/nackat_client.git"
+      }
+    ]
 }
