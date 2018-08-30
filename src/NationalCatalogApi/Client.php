@@ -77,10 +77,10 @@ final class Client
     }
 
     /**
-     * @param $property
+     * @param string $property
      * @return mixed
      */
-    public function __get($property)
+    public function __get(string $property)
     {
         if (0 === strpos($property, 'Header') && array_key_exists($header = str_replace('Header', '', $property),
                 $this->_headers)) {
@@ -92,7 +92,7 @@ final class Client
     /**
      * @param string $url
      */
-    public function setUrl($url)
+    public function setUrl(string $url) : void
     {
         $this->apiUrl = $url;
     }
@@ -101,7 +101,7 @@ final class Client
      * @param string $apiKey
      * @param string $supplierKey
      */
-    public function auth($apiKey, $supplierKey = null)
+    public function auth(string $apiKey, string $supplierKey = null) : void
     {
         $this->apiKey = $apiKey;
         $this->supplierKey = $supplierKey;
@@ -111,7 +111,7 @@ final class Client
      * @param string $format
      * @throws \Throwable
      */
-    public function setFormat($format)
+    public function setFormat($format) : void
     {
         if (in_array($format, [self::RESPONSE_FORMAT_JSON, self::RESPONSE_FORMAT_XML])) {
             $this->format = $format;
@@ -123,7 +123,7 @@ final class Client
     /**
      * @return bool
      */
-    public function hasError()
+    public function hasError() : bool
     {
         return null !== $this->_error;
     }
@@ -195,9 +195,9 @@ final class Client
      * @param array $headers
      * @return bool|string Return the result on success, FALSE on failure
      */
-    private function sendRequest($url, $params = [], array $headers = [])
+    private function sendRequest(string $url, $params = [], array $headers = [])
     {
-        $this->_error = null;
+
         $this->_headers = null;
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
@@ -269,10 +269,17 @@ final class Client
     {
         if ($this->format == self::RESPONSE_FORMAT_JSON) {
             $response = false !== $result ? json_decode($result, true) : false;
+            if ($response && isset($response['result'])) {
+                return $response['result'];
+            }
         } else if ($this->format == self::RESPONSE_FORMAT_XML) {
-            $response = $result;
+            $response = \simplexml_load_string($result);
+            if ($response) {
+                return $response->xpath('result');
+            }
         }
-        if (false !== $response) {
+        $this->_error = null;
+        if (true) {
             switch ($this->getHttpCode()) {
                 case self::CODE_STATUS_OK:
                     break;
@@ -312,7 +319,7 @@ final class Client
                     break;
             }
         }
-        return $response;
+        return false;
     }
 
     /**
@@ -323,7 +330,7 @@ final class Client
      * @param string $ETag ETag
      * @return bool|array
      */
-    public function request($requestEntity, array $params = [], $ETag = null)
+    public function request(string $requestEntity, array $params = [], string $ETag = null)
     {
         $result = $this->getPureResponse($requestEntity, $params, $ETag);
         return $this->parseResponse($result);
@@ -343,7 +350,7 @@ final class Client
      * @param string $requestEntity
      * @return string
      */
-    protected function getUrl($requestEntity)
+    protected function getUrl(string $requestEntity)
     {
         return $this->apiUrl . '/' . self::VERSION . '/' . $requestEntity;
     }
@@ -354,7 +361,7 @@ final class Client
      * @param string $ETag ETag
      * @return bool|array
      */
-    public function getBrands($ETag = null)
+    public function getBrands(string $ETag = null)
     {
         return $this->request(self::REQUEST_ENTITY_BRANDS, [], $ETag);
     }
@@ -366,7 +373,7 @@ final class Client
      * @param string $ETag ETag
      * @return bool|array
      */
-    public function getLocations($partyId = null, $ETag = null)
+    public function getLocations(int $partyId = null, string $ETag = null)
     {
         $params = [];
         if (isset($partyId)) {
@@ -383,7 +390,7 @@ final class Client
      * @param string $ETag ETag
      * @return bool|array
      */
-    public function getCategories($ETag = null)
+    public function getCategories(string $ETag = null)
     {
         return $this->request(self::REQUEST_ENTITY_CATEGORIES, [], $ETag);
     }
@@ -394,7 +401,7 @@ final class Client
      * @param string $role
      * @return bool|array
      */
-    public function getParties($role = null)
+    public function getParties(string $role = null)
     {
         return $this->request(self::REQUEST_ENTITY_PARTIES, ['role' => $role]);
     }
@@ -405,7 +412,7 @@ final class Client
      * @param string $query
      * @return bool|array
      */
-    public function getSuggestions($query)
+    public function getSuggestions(string $query)
     {
         $params = [
             'q' => $query
@@ -420,7 +427,7 @@ final class Client
      * @param int $attrType attribute type (const)
      * @return bool|array
      */
-    public function getAttributes($catId = null, $attrType = null)
+    public function getAttributes(int $catId = null, $attrType = null)
     {
         $params = [];
         if (isset($catId)) {
@@ -443,7 +450,7 @@ final class Client
      * @param float $reviewRating rating
      * @return bool|array
      */
-    public function addReplyToReview($reviewParentId, $reviewText, $socialType, $socialId, $reviewAuthor, $reviewRating)
+    public function addReplyToReview(int $reviewParentId, string $reviewText, string $socialType, string $socialId, string $reviewAuthor, float $reviewRating)
     {
         $params = [
             'review_parent_id' => $reviewParentId,
@@ -467,7 +474,7 @@ final class Client
      * @param float $reviewRating rating
      * @return bool|array
      */
-    public function addReviewToParty($partyId, $reviewText, $socialType, $socialId, $reviewAuthor, $reviewRating)
+    public function addReviewToParty(int $partyId, string $reviewText, string $socialType, string $socialId, string $reviewAuthor, float $reviewRating)
     {
         $params = [
             'party_id' => $partyId,
@@ -491,7 +498,7 @@ final class Client
      * @param float $reviewRating rating
      * @return bool|array
      */
-    public function addReviewToBrand($brandId, $reviewText, $socialType, $socialId, $reviewAuthor, $reviewRating)
+    public function addReviewToBrand(int $brandId, string $reviewText, string $socialType, string $socialId, string $reviewAuthor, float $reviewRating)
     {
         $params = [
             'brand_id' => $brandId,
@@ -515,7 +522,7 @@ final class Client
      * @param float $reviewRating rating
      * @return bool|array
      */
-    public function addReviewToGood($goodId, $reviewText, $socialType, $socialId, $reviewAuthor, $reviewRating)
+    public function addReviewToGood(int $goodId, string $reviewText, string $socialType, string $socialId, string $reviewAuthor, float $reviewRating)
     {
         $params = [
             'good_id' => $goodId,
@@ -535,7 +542,7 @@ final class Client
      * @param string $ETag ETag
      * @return bool|array
      */
-    public function getProductById($goodId, $ETag = null)
+    public function getProductById(int $goodId, string $ETag = null)
     {
         $params = [
             'good_id' => $goodId
@@ -550,7 +557,7 @@ final class Client
      * @param string $ETag ETag
      * @return bool|array
      */
-    public function getProductsByGtin($gtin, $ETag = null)
+    public function getProductsByGtin(string $gtin, string $ETag = null)
     {
         $params = [
             'gtin' => $gtin
@@ -566,7 +573,7 @@ final class Client
      * @param string $ETag ETag
      * @return bool|array
      */
-    public function getProductsByLtin($ltin, $partyId, $ETag = null)
+    public function getProductsByLtin(string $ltin, int $partyId, string $ETag = null)
     {
         $params = [
             'ltin' => $ltin,
@@ -583,7 +590,7 @@ final class Client
      * @param string $ETag ETag
      * @return bool|array
      */
-    public function getProductsBySku($sku, $partyId, $ETag = null)
+    public function getProductsBySku(string $sku, int $partyId, string $ETag = null)
     {
         $params = [
             'sku' => $sku,
@@ -598,7 +605,7 @@ final class Client
      * @param int $partyId
      * @return bool|array
      */
-    public function getETagsList($partyId)
+    public function getETagsList(int $partyId)
     {
         $params = [
             'party_id' => $partyId
@@ -612,7 +619,7 @@ final class Client
      * @param int $feedId feed id
      * @return bool|array
      */
-    public function getFeedStatus($feedId)
+    public function getFeedStatus(int $feedId)
     {
         $params = [
             'feed_id' => $feedId

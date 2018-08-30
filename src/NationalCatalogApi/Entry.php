@@ -4,6 +4,28 @@ namespace NationalCatalogApi;
 
 final class Entry
 {
+    const IDENTIFIER_TYPE_GTIN = "gtin";
+    const IDENTIFIER_TYPE_SKU = "sku";
+
+    const IDENTIFIER_LEVEL_TRADE_UNIT = "trade-unit";
+    const IDENTIFIER_LEVEL_BOX = "box";
+    const IDENTIFIER_LEVEL_LAYER = "layer";
+    const IDENTIFIER_LEVEL_PALLET = "pallet";
+    const IDENTIFIER_LEVEL_METRO_UNIT = "metro-unit";
+    const IDENTIFIER_LEVEL_SHOW_PACK = "show-pack";
+    const IDENTIFIER_LEVEL_MULTI_PACK = "multi-pack";
+
+    const PHOTO_TYPE_DEFAULT = "default";
+    const PHOTO_TYPE_FACING = "facing";
+    const PHOTO_TYPE_LEFT = "left";
+    const PHOTO_TYPE_RIGHT = "right";
+    const PHOTO_TYPE_BACK = "back";
+    const PHOTO_TYPE_3DS = "3ds";
+    const PHOTO_TYPE_MARKETING = "marketing";
+    const PHOTO_TYPE_ECOMMERCE = "ecommerce";
+    const PHOTO_TYPE_UNDEF = "undef";
+    const PHOTO_TYPE_CUBI = "cubi";
+
     /**
      * @var array
      */
@@ -20,7 +42,7 @@ final class Entry
     /**
      * @param int $catId
      */
-    public function addCategory($catId)
+    public function addCategory(int $catId) : void
     {
         if (!isset($this->entry['categories'])) {
             $this->entry['categories'] = [];
@@ -31,7 +53,7 @@ final class Entry
     /**
      * @param int $catId
      */
-    public function deleteCategory($catId)
+    public function deleteCategory(int $catId) : void
     {
         if (!isset($this->entry['categories'])) {
             $this->entry['categories'] = [];
@@ -46,7 +68,7 @@ final class Entry
      * @param string $level
      * @param int $multiplier
      */
-    public function addIdentifiedBy($type, $value, $partyId = null, $level = "trade-unit", $multiplier = 1)
+    public function addIdentifiedBy(string $type, string $value, int $partyId = 0, string $level = self::IDENTIFIER_LEVEL_TRADE_UNIT, int $multiplier = 1) : void
     {
         $identifiedBy = [
             'type' => $type,
@@ -69,7 +91,7 @@ final class Entry
      * @param string $attrValueType
      * @param int $attrValueId
      */
-    public function addAttr($attrId, $attrValue, $attrValueType = null, $attrValueId = null)
+    public function addAttr(int $attrId, $attrValue, string $attrValueType = null, int $attrValueId = null) : void
     {
         $attr = [
             'attr_id' => $attrId,
@@ -92,7 +114,7 @@ final class Entry
      * @param string|array $url
      * @param int $locationId
      */
-    public function addImage($type, $url, $locationId = null)
+    public function addImage(string $type, $url, int $locationId = null) : void
     {
         $image = [
             'photo_type' => $type,
@@ -112,7 +134,7 @@ final class Entry
     /**
      * @param int $goodId
      */
-    public function setGoodId($goodId)
+    public function setGoodId(int $goodId) : void
     {
         $this->entry['good_id'] = $goodId;
     }
@@ -120,7 +142,7 @@ final class Entry
     /**
      * @param string $goodName
      */
-    public function setGoodName($goodName)
+    public function setGoodName(string $goodName) : void
     {
         $this->entry['good_name'] = $goodName;
     }
@@ -128,7 +150,7 @@ final class Entry
     /**
      * @return array
      */
-    public function toArray()
+    public function toArray() : array
     {
         return $this->entry;
     }

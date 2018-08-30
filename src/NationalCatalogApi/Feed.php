@@ -12,7 +12,7 @@ final class Feed
     /**Returns empty entry
      * @return Entry
      */
-    public function newEntry()
+    public function newEntry() : Entry
 	{
 		return new Entry();
 	}
@@ -20,7 +20,7 @@ final class Feed
     /**Add formed Entry
      * @param Entry $entry
      */
-	public function addEntry($entry)
+	public function addEntry(Entry $entry)
 	{
 		$this->entries[] = $entry;
 	}
@@ -29,7 +29,7 @@ final class Feed
      * Returns entries
      * @return array of Entry obj
      */
-	public function getList()
+	public function getList() : array
 	{
 		return $this->entries;
 	}
